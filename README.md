@@ -30,3 +30,4 @@ The project includes:
 ---
 
 # Not released yet, due 2026.
+# Offical alphas will start releasing very soon.
