@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "efi.h": "c",
+        "efilib.h": "c",
+        "toucanix_lib.h": "c",
+        "printimproved.h": "c"
+    }
+}
