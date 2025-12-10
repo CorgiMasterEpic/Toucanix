@@ -124,6 +124,31 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 
     PrintInfo(SystemTable, L"Kernel fully loaded.");
 
+	//
+	// Initialize GOP
+	//
+	GopMode *newMode = InitializeGraphicsOutputProtocol(SystemTable);
+	Print(L"[Base]: 0x%x\n\r[Size]: 0x%x\n\r[Resolution]: %dx%d %d PPS\n\r", 
+	newMode->info->baseAddress, 
+	newMode->info->bufferSize, 
+	newMode->width, 
+	newMode->height, 
+	newMode->fullWidth);
+
+    PSFFont *newFont = LoadPSFFont(
+        NULL,
+        L"\\Nexus\\Fonts\\Default.psf",
+        ImageHandle,
+        SystemTable
+    );
+
+    Canvas newCanvas;
+	newCanvas.mode = newMode;
+    newCanvas.font = newFont;
+
+    BootInfo bootInfo;
+    bootInfo.canvas = &newCanvas;
+
     //
     // Jump to kernel
     //
@@ -133,12 +158,9 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
     Print(L"Jumping to entry point: 0x%lx\r\n\r\n", Header.e_entry);
     SetColor(SystemTable, EFI_LIGHTGRAY, EFI_BLACK);
 
-    int (*KernelStart)() = ((__attribute__((sysv_abi)) int (*)())Header.e_entry);
+    void (*KernelStart)(BootInfo*) = ((__attribute__((sysv_abi)) void (*)(BootInfo*))Header.e_entry);
 
-    int Result = KernelStart();
-
-    PrintInfo(SystemTable, L"Kernel returned.");
-    Print(L"   Return code: %d\r\n", Result);
+    KernelStart(&bootInfo);
 
     return EFI_SUCCESS;
 }
