@@ -20,5 +20,5 @@ It focuses on simplicity, learning, and long-term experimentation rather than co
 
 You can see more details on other pages.
 
-# Work in progress due 2026.
+# Work in progress due late 2026.
 # Offical Alphas Are Out!
